@@ -57,5 +57,37 @@ CREATE TABLE TipoService (
 )
 GO
 
+--Julian
+CREATE TABLE Vehiculo (
+    IdVehiculo INT PRIMARY KEY IDENTITY (1,1),
+    IdCliente INT NOT NULL,
+    IdModelo INT NOT NULL,
+    Patente VARCHAR (10) UNIQUE NOT NULL,
+    Kilometraje INT NOT NULL,
+    FOREIGN KEY (IdCliente) REFERENCES Cliente(IdCliente),
+    FOREIGN KEY (IdModelo) REFERENCES Modelo(IdModelo)
+);
+
+CREATE TABLE Rol (
+    IdRol INT PRIMARY KEY IDENTITY (1,1),
+    Tipo VARCHAR (100) NOT NULL UNIQUE
+);
+
+CREATE TABLE Pagos (
+    IdPago INT PRIMARY KEY IDENTITY (1,1),
+    FechaPago DATETIME NOT NULL,
+    Monto DECIMAL (10,2) CHECK (Monto > 0),
+    MetodoPago VARCHAR (100) NOT NULL
+);
+
+CREATE TABLE ServiceDetalle_X_Repuestos (
+    IdServiceDetalle INT NOT NULL,
+    IdRepuesto INT NOT NULL,
+    Cantidad INT NOT NULL CHECK (Cantidad > 0),
+    PRIMARY KEY (IdServiceDetalle, IdRepuesto),
+    FOREIGN KEY (IdServiceDetalle) REFERENCES Service_Detalle (IdServiceDetalle),
+    FOREIGN KEY (IdRepuesto) REFERENCES Repuesto (IdRepuesto)
+);
+
 
 
