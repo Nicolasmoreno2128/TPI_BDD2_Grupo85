@@ -91,7 +91,7 @@ CREATE TABLE ServiceDetalle_X_Repuestos (
 
 -- Santiago
 CREATE TABLE Persona(
-    IdPersona INT PRIMARY KEY NOT NULL,
+    IdPersona INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
     Nombre VARCHAR(100) NOT NULL,
     Apellido VARCHAR(100) NOT NULL,
     DNI VARCHAR(13) NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE Persona(
 go
 
 CREATE TABLE Service(
-    IdService INT PRIMARY KEY NOT NULL,
+    IdService INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
     IdTurno INT NOT NULL FOREIGN KEY REFERENCES Turnos(IdTurno), 
     IdEmpleado INT NOT NULL FOREIGN KEY REFERENCES Empleado(IdEmpleado), 
     IdTipoService INT NOT NULL FOREIGN KEY REFERENCES TipoService(IdTipoService), 
@@ -113,25 +113,17 @@ CREATE TABLE Service(
 )
 go
 
-CREATE TABLE Service_mano_de_obra(
-    IdService INT NOT NULL FOREIGN KEY REFERENCES Service(IdService),
-    IdManoDeObra INT NOT NULL FOREIGN KEY REFERENCES Mano_De_Obra(IdManoDeObra),
-    Horas DECIMAL NOT NULL,
-    PrecioPorHora DECIMAL NOT NULL
-    PRIMARY KEY (IdService, IdManoDeObra),
-)
-go
-
 CREATE TABLE Repuestos(
-    IdRepuesto INT PRIMARY KEY NOT NULL,
+    IdRepuesto INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
     Nombre VARCHAR(100) NOT NULL,
     Stock INT NOT NULL,
-    PrecioUnitario DECIMAL (10,2) NOT NULL,
+    PrecioUnitario DECIMAL (10,2) NOT NULL
 )
 go
 
 CREATE TABLE Service_Detalle(
-    IdServiceDetalle INT PRIMARY KEY NOT NULL,
-    IdService INT NOT NULL,
-    IdManoDeObra INT NOT NULL
+    IdServiceDetalle INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+    IdService INT NOT NULL FOREIGN KEY REFERENCES Service(IdService),
+    IdManoDeObra INT NOT NULL FOREIGN KEY REFERENCES Mano_De_Obra(IdManoDeObra)
 )
+go
