@@ -25,7 +25,7 @@ CREATE TABLE Usuario (
     IdUsuario INT IDENTITY(1,1) PRIMARY KEY,
     IdPersona INT NOT NULL,
     Usuario VARCHAR(255) NOT NULL,
-    Contraseña VARCHAR(255) NOT NULL,
+    ContraseÃ±a VARCHAR(255) NOT NULL,
     IdRol INT NOT NULL,
     FOREIGN KEY (IdPersona) REFERENCES Persona(IdPersona),
     FOREIGN KEY (IdRol) REFERENCES Rol(IdRol)
@@ -89,5 +89,49 @@ CREATE TABLE ServiceDetalle_X_Repuestos (
     FOREIGN KEY (IdRepuesto) REFERENCES Repuesto (IdRepuesto)
 );
 
+-- Santiago
+CREATE TABLE Persona(
+    IdPersona INT PRIMARY KEY NOT NULL,
+    Nombre VARCHAR(100) NOT NULL,
+    Apellido VARCHAR(100) NOT NULL,
+    DNI VARCHAR(13) NOT NULL,
+    Direccion VARCHAR(200) NOT NULL,
+    FechaNacimiento DATE NOT NULL,
+    Email VARCHAR(100) NOT NULL
+)
+go
 
+CREATE TABLE Service(
+    IdService INT PRIMARY KEY NOT NULL,
+    IdTurno INT NOT NULL FOREIGN KEY REFERENCES Turnos(IdTurno), 
+    IdEmpleado INT NOT NULL FOREIGN KEY REFERENCES Empleado(IdEmpleado), 
+    IdTipoService INT NOT NULL FOREIGN KEY REFERENCES TipoService(IdTipoService), 
+    FechaInicio DATETIME,
+    FechaFinal DATETIME,
+    Estado VARCHAR(200) NOT NULL,
+    IdPago INT NOT NULL FOREIGN KEY REFERENCES Pagos(IdPago)
+)
+go
 
+CREATE TABLE Service_mano_de_obra(
+    IdService INT NOT NULL FOREIGN KEY REFERENCES Service(IdService),
+    IdManoDeObra INT NOT NULL FOREIGN KEY REFERENCES Mano_De_Obra(IdManoDeObra),
+    Horas DECIMAL NOT NULL,
+    PrecioPorHora DECIMAL NOT NULL
+    PRIMARY KEY (IdService, IdManoDeObra),
+)
+go
+
+CREATE TABLE Repuestos(
+    IdRepuesto INT PRIMARY KEY NOT NULL,
+    Nombre VARCHAR(100) NOT NULL,
+    Stock INT NOT NULL,
+    PrecioUnitario DECIMAL (10,2) NOT NULL,
+)
+go
+
+CREATE TABLE Service_Detalle(
+    IdServiceDetalle INT PRIMARY KEY NOT NULL,
+    IdService INT NOT NULL,
+    IdManoDeObra INT NOT NULL
+)
