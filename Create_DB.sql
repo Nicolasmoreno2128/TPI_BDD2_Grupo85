@@ -30,7 +30,7 @@ CREATE TABLE TipoService (
 )
 GO
 
-CREATE TABLE Repuestos(
+CREATE TABLE Repuesto(
     IdRepuesto INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
     Nombre VARCHAR(100) NOT NULL,
     Stock INT NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE Repuestos(
 )
 go
 
-CREATE TABLE Pagos (
+CREATE TABLE Pago (
     IdPago INT PRIMARY KEY IDENTITY (1,1),
     FechaPago DATETIME NOT NULL,
     Monto DECIMAL (10,2) CHECK (Monto > 0),
@@ -120,35 +120,37 @@ CREATE TABLE Vehiculo (
 go
 
 
-CREATE TABLE Turnos(
+CREATE TABLE Turno(
 IdTurno int identity (1,1) primary key,
 IdVehiculo int not null,
-IdEmpleados int not null,
+IdEmpleado int not null,
 FechaTurno datetime not null,
 Estado varchar(20) not null,
 Observaciones text not null,
 foreign key (IdVehiculo) references Vehiculo(IdVehiculo),
-foreign key (IdEmpleados) references Empleado(IdEmpleado)
+foreign key (IdEmpleado) references Empleado(IdEmpleado)
 )
 
 go 
 
 CREATE TABLE Service_(
     IdService INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
-    IdTurno INT NOT NULL FOREIGN KEY REFERENCES Turnos(IdTurno), 
+    IdTurno INT NOT NULL FOREIGN KEY REFERENCES Turno(IdTurno), 
     IdEmpleado INT NOT NULL FOREIGN KEY REFERENCES Empleado(IdEmpleado), 
     IdTipoService INT NOT NULL FOREIGN KEY REFERENCES TipoService(IdTipoService), 
     FechaInicio DATETIME,
     FechaFinal DATETIME,
     Estado VARCHAR(200) NOT NULL,
-    IdPago INT NOT NULL FOREIGN KEY REFERENCES Pagos(IdPago)
+    IdPago INT NOT NULL FOREIGN KEY REFERENCES Pago(IdPago)
 )
 go
 
 CREATE TABLE Service_Detalle(
     IdServiceDetalle INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
     IdService INT NOT NULL FOREIGN KEY REFERENCES Service_(IdService),
-    IdManoDeObra INT NOT NULL FOREIGN KEY REFERENCES ManoDeObra(IdManoDeObra)
+    IdManoDeObra INT NOT NULL FOREIGN KEY REFERENCES ManoDeObra(IdManoDeObra),
+    Horas DECIMAL(8,2) NOT NULL,
+    PrecioPorHora DECIMAL(10,2) NOT NULL
 )
 go
 
@@ -156,9 +158,10 @@ CREATE TABLE ServiceDetalle_X_Repuestos (
     IdServiceDetalle INT NOT NULL,
     IdRepuesto INT NOT NULL,
     Cantidad INT NOT NULL CHECK (Cantidad > 0),
+    PrecioUnitario DECIMAL(10,2) NOT NULL,
     PRIMARY KEY (IdServiceDetalle, IdRepuesto),
     FOREIGN KEY (IdServiceDetalle) REFERENCES Service_Detalle (IdServiceDetalle),
-    FOREIGN KEY (IdRepuesto) REFERENCES Repuestos (IdRepuesto)
+    FOREIGN KEY (IdRepuesto) REFERENCES Repuesto (IdRepuesto)
 );
 
 go
@@ -168,7 +171,7 @@ IdServiceDetalle int not null,
 IdTipoService int not null,
 primary key (IdServiceDetalle,IdTipoService),
 foreign key (IdServiceDetalle) references Service_Detalle (IdServiceDetalle),
-foreign key (IdTipoService) references TipoService (IdTipoService),
+foreign key (IdTipoService) references TipoService (IdTipoService)
 
 )
 
@@ -244,7 +247,7 @@ INSERT INTO Vehiculo (IdCliente, IdModelo, Patente, Kilometraje) VALUES
 (4, 5, 'AE321GH', 35000),
 (5, 6, 'AF654IJ', 61000);
 
-INSERT INTO Pagos (FechaPago, Monto, MetodoPago) VALUES
+INSERT INTO Pago (FechaPago, Monto, MetodoPago) VALUES
 ('2024-05-01', 25000, 'Efectivo'),
 ('2024-05-02', 30000, 'Tarjeta Débito'),
 ('2024-06-15', 45000, 'Transferencia'),
@@ -270,11 +273,11 @@ INSERT INTO ManoDeObra (Descripcion, PrecioPorHora) VALUES
 ('Cambio de bujías', 2800.00),
 ('Control de luces', 2000.00);
 
-INSERT INTO Turnos (IdVehiculo, IdEmpleados, FechaTurno, Estado, Observaciones) VALUES
+INSERT INTO Turno (IdVehiculo, IdEmpleado, FechaTurno, Estado, Observaciones) VALUES
 (1, 3, '2024-05-05', 'Completado', 'Service completo realizado sin novedades'),
 (2, 4, '2024-05-08', 'Cancelado', 'Cliente reprogramó por viaje'),
 (3, 3, '2024-06-01', 'Completado', 'Revisión y cambio de frenos'),
-(4, 4, '2024-07-10', 'Pendiente', 'Esperando repuesto'),
+(4, 4, '2024-07-10', 'En Proceso', 'Esperando repuesto'),
 (5, 3, '2024-07-20', 'Completado', 'Alineación y balanceo realizado');
 
 INSERT INTO Service_ (IdTurno, IdEmpleado, IdTipoService, FechaInicio, FechaFinal, Estado, IdPago) VALUES
@@ -283,14 +286,14 @@ INSERT INTO Service_ (IdTurno, IdEmpleado, IdTipoService, FechaInicio, FechaFina
 (4, 4, 5, '2024-07-10', NULL, 'En Proceso', 3),
 (5, 3, 4, '2024-07-20', '2024-07-21', 'Finalizado', 4);
 
-INSERT INTO Service_Detalle (IdService, IdManoDeObra) VALUES
-(1, 1),
-(1, 3),
-(2, 4),
-(3, 5),
-(4, 2);
+INSERT INTO Service_Detalle (IdService, IdManoDeObra, Horas, PrecioPorHora) VALUES
+(1, 1, 1.0, 3500.00), -- service 1 - cambio aceite, $3500, 1 hora
+(1, 3, 2.5, 4500.00), -- service 1 - revision general, $4500, 2.5 hora
+(2, 4, 1.5, 3800.00), -- service 2 - frenos, $3800, 1.5 hora
+(3, 5, 0.5, 3000.00),
+(4, 2, 1.2, 4000.00);
 
-INSERT INTO Repuestos (Nombre, Stock, PrecioUnitario) VALUES
+INSERT INTO Repuesto (Nombre, Stock, PrecioUnitario) VALUES
 ('Filtro de aceite', 50, 2500.00),
 ('Aceite sintético 5W30', 40, 8500.00),
 ('Pastillas de freno', 60, 7800.00),
@@ -302,14 +305,14 @@ INSERT INTO Repuestos (Nombre, Stock, PrecioUnitario) VALUES
 ('Filtro de combustible', 35, 4100.00),
 ('Limpiador inyectores', 15, 3800.00);
 
-INSERT INTO ServiceDetalle_X_Repuestos (IdServiceDetalle, IdRepuesto, Cantidad) VALUES
-(1, 1, 1),
-(1, 2, 4),
-(2, 3, 1),
-(3, 4, 1),
-(4, 5, 1),
-(4, 6, 4),
-(5, 2, 3);
+INSERT INTO ServiceDetalle_X_Repuestos (IdServiceDetalle, IdRepuesto, Cantidad, PrecioUnitario) VALUES
+(1, 1, 1, 2500.00),
+(1, 2, 4, 8500.00),
+(2, 3, 1, 7800.00),
+(3, 4, 1, 45000.00),
+(4, 5, 1, 3200.00),
+(4, 6, 4, 1500.00),
+(5, 2, 3, 2200.00);
 
 INSERT INTO Service_Detalle_x_Tipo_Service (IdServiceDetalle, IdTipoService) VALUES
 (1, 1),
