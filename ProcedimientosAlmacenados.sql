@@ -1,3 +1,4 @@
+use TPI_BDD2_Grupo85
 --------------------------------
 -- PROCEDIMIENTOS ALMACENADOS --
 --------------------------------
@@ -42,4 +43,66 @@ GO
 
 exec sp_Obtener_Historial_Cliente 1;
 
+
+-- Procedimiento almacenado: Agregar turno
+
+CREATE PROCEDURE sp_AgregarTurno
+    @pIdVehiculo INT,
+    @pIdEmpleado INT,
+    @pFechaTurno DATETIME,
+    @pObservaciones TEXT = NULL
+AS
+BEGIN
+    -- VALIDACION DE DATOS
+
+    -- Valido que exista el vehiculo --
+    IF NOT EXISTS (SELECT 1 FROM Vehiculo WHERE IdVehiculo = @pIdVehiculo)
+    BEGIN
+        RAISERROR ('Error: El vehiculo no existe', 16, 1);
+        RETURN -1;
+    END
+
+    -- Valido que exista el empleado --
+    IF NOT EXISTS (SELECT 1 FROM Empleado WHERE IdEmpleado = @pIdEmpleado)
+    BEGIN
+        RAISERROR ('Error: El empleado no existe', 16, 1);
+        RETURN -1;
+    END
+
+    -- Valido fecha -- 
+
+    -- Valido que la fecha no sea del pasado
+    IF @pFechaTurno < GETDATE()
+    BEGIN
+        RAISERROR ('Error: No se puede crear un turno en una fecha pasada', 16, 1);
+        RETURN -1;
+    END
+    -- Valido que el empleado no tenga turno en esa misma fecha
+    IF EXISTS (SELECT 1 FROM Turno WHERE IdEmpleado = @pIdEmpleado AND FechaTurno = @pFechaTurno AND Estado <> 'Cancelado')
+    BEGIN
+        RAISERROR ('Error: El empleado ya tiene un turno asignado en ese horario', 16, 1);
+        RETURN -1;
+    END
+
+    -- INSERCION DE DATOS
+
+    -- Inserto nuevo turno
+    BEGIN TRY
+        INSERT INTO Turno (IdVehiculo, IdEmpleado, FechaTurno, Estado, Observaciones)
+        VALUES (@pIdVehiculo, @pIdEmpleado, @pFechaTurno, 'Pendiente', @pObservaciones)
+
+        PRINT 'Turno agregado exitosamente.';
+        RETURN 0;
+    END TRY
+    BEGIN CATCH
+        PRINT ERROR_MESSAGE()
+        RETURN -99; 
+    END CATCH
+END
+GO
+
+-- Ejecucion
+EXEC sp_AgregarTurno 1, 2, '2025-11-15 09:00:00', 'Mantenimiento general'
+
+select * from Turno
 
