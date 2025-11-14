@@ -9,7 +9,36 @@ CREATE PROCEDURE sp_Obtener_Historial_Cliente
     @IdCliente INT
 AS
 BEGIN
+    -- SE VALIDA QUE PRIMERO EXISTA EL CLIENTE --
 
+    IF NOT EXISTS (SELECT 1 FROM Cliente WHERE IdCliente = @IdCliente)
+    BEGIN
+        RAISERROR('El cliente con el Id especificado no existe.', 16, 1);
+        RETURN;
+    END
+
+    -- SI EXISTE, SE VALIDA QUE TENGA VEHICULOS --
+
+        IF NOT EXISTS (SELECT 1 FROM Vehiculo WHERE IdCliente = @IdCliente)
+    BEGIN
+        PRINT 'El cliente existe, pero no tiene vehículos registrados.';
+        RETURN;
+    END;
+
+    -- SI TIENE VEHICULO, SE VALIDA SI TIENE TURNOS O SERVICES PROGRAMADOS --
+
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM Vehiculo V 
+            LEFT JOIN Turno T ON T.IdVehiculo = V.IdVehiculo
+            LEFT JOIN Service_ S ON S.IdTurno = T.IdTurno
+            WHERE V.IdCliente = @IdCliente
+        )
+    BEGIN
+        PRINT 'El cliente tiene vehículos, pero aún no registra turnos ni services.';
+        RETURN;
+    END;
+    
     SELECT 
         C.IdCliente,
         P.Nombre + ' ' + P.Apellido AS Cliente,
@@ -38,6 +67,8 @@ BEGIN
     LEFT JOIN Pago PAGO ON S.IdPago = PAGO.IdPago
     WHERE C.IdCliente = @IdCliente
     ORDER BY T.FechaTurno DESC, S.FechaInicio DESC;
+   
+
 END;
 GO
 
