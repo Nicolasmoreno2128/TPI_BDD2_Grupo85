@@ -3,6 +3,49 @@ use TPI_BDD2_Grupo85
 -- PROCEDIMIENTOS ALMACENADOS --
 --------------------------------
 
+CREATE PROCEDURE sp_AgregarVehiculo
+    @IdCliente INT,
+    @IdModelo INT,
+    @Patente VARCHAR(10),
+    @Kilometraje INT
+AS
+BEGIN
+
+    -- Validar que exista el cliente
+    IF NOT EXISTS(SELECT 1 FROM Cliente WHERE IdCliente = @IdCliente)
+    BEGIN
+        RAISERROR('El cliente no existe.', 16, 1);
+        RETURN;
+    END;
+
+    -- Validar que exista el modelo
+    IF NOT EXISTS(SELECT 1 FROM Modelo WHERE IdModelo = @IdModelo)
+    BEGIN
+        RAISERROR('El modelo no existe.', 16, 1);
+        RETURN;
+    END;
+
+    -- Validar patente única
+    IF EXISTS(SELECT 1 FROM Vehiculo WHERE Patente = @Patente)
+    BEGIN
+        RAISERROR('La patente ya se encuentra registrada.', 16, 1);
+        RETURN;
+    END;
+
+    -- Validar kilometraje
+    IF (@Kilometraje < 0)
+    BEGIN
+        RAISERROR('El kilometraje no puede ser negativo.', 16, 1);
+        RETURN;
+    END;
+
+    INSERT INTO Vehiculo(IdCliente, IdModelo, Patente, Kilometraje)
+    VALUES (@IdCliente, @IdModelo, @Patente, @Kilometraje);
+
+    PRINT 'Vehículo agregado correctamente.';
+END;
+GO
+
 -- SP: Obtener historial de cliente
 
 CREATE PROCEDURE sp_Obtener_Historial_Cliente
