@@ -1,27 +1,27 @@
-Create database TPI_BDD2_Grupo85
+CREATE DATABASE TPI_BDD2_Grupo85
 
-go
+GO
 
-use TPI_BDD2_Grupo85
+USE TPI_BDD2_Grupo85
 
-go
+GO
 
 ------------------------
 -- CREACION DE TABLAS --
 ------------------------
 
-create table Marca(
+CREATE TABLE Marca(
 IdMarca int identity (1,1) primary key,
 Nombre Varchar (50) not null
 )
-go
+GO
 
-create table ManoDeObra(
+CREATE TABLE ManoDeObra(
 IdManoDeObra int identity (1,1) primary key,
 Descripcion varchar (255) not null,
 PrecioPorHora decimal (10,2) not null
 )
-go
+GO
 
 CREATE TABLE TipoService (
     IdTipoService INT IDENTITY(1,1) PRIMARY KEY,
@@ -36,7 +36,7 @@ CREATE TABLE Repuesto(
     Stock INT NOT NULL,
     PrecioUnitario DECIMAL (10,2) NOT NULL
 )
-go
+GO
 
 CREATE TABLE Pago (
     IdPago INT PRIMARY KEY IDENTITY (1,1),
@@ -45,13 +45,13 @@ CREATE TABLE Pago (
     MetodoPago VARCHAR (100) NOT NULL
 )
 
-go
+GO
 
 CREATE TABLE Rol (
     IdRol INT PRIMARY KEY IDENTITY (1,1),
     Tipo VARCHAR (100) NOT NULL UNIQUE
 );
-go
+GO
 
 CREATE TABLE Modelo (
     IdModelo INT IDENTITY(1,1) PRIMARY KEY,
@@ -71,7 +71,7 @@ CREATE TABLE Persona(
     FechaNacimiento DATE NOT NULL,
     Email VARCHAR(100) NOT NULL
 )
-go
+GO
 
 
 CREATE TABLE Usuario (
@@ -85,7 +85,6 @@ CREATE TABLE Usuario (
 )
 GO
 
---Nico
 CREATE TABLE Cliente(
 IdCliente int identity (1,1) primary key,
 IdPersona int not null,
@@ -94,7 +93,7 @@ foreign key (IdPersona) references Persona(IdPersona)
 
 )
 
-go
+GO
 
 
 CREATE TABLE Empleado (
@@ -117,7 +116,7 @@ CREATE TABLE Vehiculo (
     FOREIGN KEY (IdCliente) REFERENCES Cliente(IdCliente),
     FOREIGN KEY (IdModelo) REFERENCES Modelo(IdModelo)
 );
-go
+GO
 
 
 CREATE TABLE Turno(
@@ -131,7 +130,7 @@ foreign key (IdVehiculo) references Vehiculo(IdVehiculo),
 foreign key (IdEmpleado) references Empleado(IdEmpleado)
 )
 
-go 
+GO
 
 CREATE TABLE Service_(
     IdService INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
@@ -143,7 +142,7 @@ CREATE TABLE Service_(
     Estado VARCHAR(200) NOT NULL,
     IdPago INT NOT NULL FOREIGN KEY REFERENCES Pago(IdPago)
 )
-go
+GO
 
 CREATE TABLE Service_Detalle(
     IdServiceDetalle INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
@@ -152,7 +151,7 @@ CREATE TABLE Service_Detalle(
     Horas DECIMAL(8,2) NOT NULL,
     PrecioPorHora DECIMAL(10,2) NOT NULL
 )
-go
+GO
 
 CREATE TABLE ServiceDetalle_X_Repuestos (
     IdServiceDetalle INT NOT NULL,
@@ -164,7 +163,7 @@ CREATE TABLE ServiceDetalle_X_Repuestos (
     FOREIGN KEY (IdRepuesto) REFERENCES Repuesto (IdRepuesto)
 );
 
-go
+GO
 
 CREATE TABLE Service_Detalle_x_Tipo_Service (
 IdServiceDetalle int not null,
@@ -278,7 +277,12 @@ INSERT INTO Turno (IdVehiculo, IdEmpleado, FechaTurno, Estado, Observaciones) VA
 (2, 4, '2024-05-08', 'Cancelado', 'Cliente reprogramó por viaje'),
 (3, 3, '2024-06-01', 'Completado', 'Revisión y cambio de frenos'),
 (4, 4, '2024-07-10', 'En Proceso', 'Esperando repuesto'),
-(5, 3, '2024-07-20', 'Completado', 'Alineación y balanceo realizado');
+(5, 3, '2024-07-20', 'Completado', 'Alineación y balanceo realizado'),
+(1, 3, '2025-11-20', 'Pendiente', 'Service programado: cambio de aceite y revisión general'),
+(2, 4, '2025-12-02', 'Pendiente', 'Revisión general antes de viaje largo'),
+(3, 3, '2025-12-10', 'Programado', 'Chequeo de frenos y alineación'),
+(4, 5, '2025-12-18', 'Pendiente', 'Cambio de batería y diagnóstico electrónico'),
+(5, 4, '2026-01-15', 'Pendiente', 'Service completo post vacaciones');
 
 INSERT INTO Service_ (IdTurno, IdEmpleado, IdTipoService, FechaInicio, FechaFinal, Estado, IdPago) VALUES
 (1, 3, 1, '2024-05-05', '2024-05-06', 'Finalizado', 1),
