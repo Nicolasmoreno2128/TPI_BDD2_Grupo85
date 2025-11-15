@@ -3,6 +3,7 @@ use TPI_BDD2_Grupo85
 -- TRIGGERS --
 --------------
 
+
 CREATE TRIGGER trg_EvitarTurnosDuplicados
 ON Turno
 INSTEAD OF INSERT
@@ -33,8 +34,7 @@ BEGIN
         IF @@TRANCOUNT > 0
             ROLLBACK TRANSACTION;
 
-        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
-        RAISERROR(@ErrorMessage, 16, 1);
+        RAISERROR('Ocurrio un error', 16, 1);
     END CATCH
 END;
 GO

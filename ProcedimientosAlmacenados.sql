@@ -46,6 +46,8 @@ BEGIN
 END;
 GO
 
+
+drop procedure sp_Obtener_Historial_Cliente
 -- SP: Obtener historial de cliente
 
 CREATE PROCEDURE sp_Obtener_Historial_Cliente
@@ -68,20 +70,6 @@ BEGIN
         RETURN;
     END;
 
-    -- SI TIENE VEHICULO, SE VALIDA SI TIENE TURNOS O SERVICES PROGRAMADOS --
-
-        IF NOT EXISTS (
-            SELECT 1 
-            FROM Vehiculo V 
-            LEFT JOIN Turno T ON T.IdVehiculo = V.IdVehiculo
-            LEFT JOIN Service_ S ON S.IdTurno = T.IdTurno
-            WHERE V.IdCliente = @IdCliente
-        )
-    BEGIN
-        PRINT 'El cliente tiene vehículos, pero aún no registra turnos ni services.';
-        RETURN;
-    END;
-    
     SELECT 
         C.IdCliente,
         P.Nombre + ' ' + P.Apellido AS Cliente,
@@ -116,6 +104,10 @@ END;
 GO
 
 exec sp_Obtener_Historial_Cliente 1;
+
+exec sp_AgregarVehiculo 6, 4, 'abc123', 25000
+
+select * from Modelo
 
 
 -- Procedimiento almacenado: Agregar turno
