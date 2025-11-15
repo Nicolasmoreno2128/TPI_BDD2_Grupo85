@@ -108,12 +108,6 @@ BEGIN
         RAISERROR ('Error: No se puede crear un turno en una fecha pasada', 16, 1);
         RETURN -1;
     END
-    -- Valido que el empleado no tenga turno en esa misma fecha
-    IF EXISTS (SELECT 1 FROM Turno WHERE IdEmpleado = @pIdEmpleado AND FechaTurno = @pFechaTurno AND Estado <> 'Cancelado')
-    BEGIN
-        RAISERROR ('Error: El empleado ya tiene un turno asignado en ese horario', 16, 1);
-        RETURN -1;
-    END
 
     -- INSERCION DE DATOS
 
@@ -131,9 +125,4 @@ BEGIN
     END CATCH
 END
 GO
-
--- Ejecucion
-EXEC sp_AgregarTurno 1, 2, '2025-11-15 09:00:00', 'Mantenimiento general'
-
-select * from Turno
 
