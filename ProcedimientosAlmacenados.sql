@@ -47,9 +47,6 @@ END;
 GO
 
 
-drop procedure sp_Obtener_Historial_Cliente
--- SP: Obtener historial de cliente
-
 CREATE PROCEDURE sp_Obtener_Historial_Cliente
     @IdCliente INT
 AS
@@ -102,12 +99,6 @@ BEGIN
 
 END;
 GO
-
-exec sp_Obtener_Historial_Cliente 1;
-
-exec sp_AgregarVehiculo 6, 4, 'abc123', 25000
-
-select * from Modelo
 
 
 -- Procedimiento almacenado: Agregar turno
