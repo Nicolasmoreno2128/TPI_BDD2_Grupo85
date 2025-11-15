@@ -39,3 +39,35 @@ BEGIN
 END;
 GO
 
+-- Actualizar Stock de repuestos
+
+CREATE TRIGGER TRG_ActualizarStockRepuestos ON ServiceDetalle_X_Repuestos
+AFTER INSERT
+AS
+BEGIN
+
+    --  Intento actualizar tabla Repuesto
+    UPDATE R SET R.Stock = R.Stock - I.Cantidad FROM Repuesto R
+    INNER JOIN INSERTED I ON R.IdRepuesto = I.IdRepuesto
+
+    -- Verifico si queda en stock negativo
+    IF EXISTS (
+        SELECT 1 FROM Repuesto R
+        INNER JOIN INSERTED I ON R.IdRepuesto = I.IdRepuesto
+        WHERE R.Stock < 0
+    )
+    BEGIN
+        -- Si queda negativo vuelvo atras
+        ROLLBACK TRANSACTION
+
+        RAISERROR('Error: No hay suficiente stock.',16,1)
+    END
+END
+GO
+
+INSERT INTO ServiceDetalle_X_Repuestos (IdServiceDetalle, IdRepuesto, Cantidad, PrecioUnitario)
+VALUES (1,10,1000000, 3800.00)
+
+
+
+    
