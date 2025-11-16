@@ -38,3 +38,25 @@ WHERE T.FechaTurno > GETDATE();
 GO
 
 SELECT * FROM Vw_turnosFuturos;
+
+-- Vista RepuestosMasUsados:
+-- Muestra los Repuestos Más Usados
+
+CREATE VIEW Vw_RepuestosMasUsados AS
+SELECT
+    R.IdRepuesto,
+    R.Nombre AS NombreRepuesto,
+    R.Stock AS StockActual,
+    SUM(SR.Cantidad) AS CantidadTotalUsada
+FROM
+    Repuesto R
+JOIN
+    ServiceDetalle_X_Repuestos SR ON R.IdRepuesto = SR.IdRepuesto
+GROUP BY
+    R.IdRepuesto, R.Nombre, R.Stock;
+GO
+
+-- Ordeno la vista por los repuestos más usados de forma descendente
+SELECT *
+FROM Vw_RepuestosMasUsados
+ORDER BY CantidadTotalUsada DESC;
