@@ -60,3 +60,47 @@ GO
 SELECT *
 FROM Vw_RepuestosMasUsados
 ORDER BY CantidadTotalUsada DESC;
+
+
+GO
+
+-- Vista ServicesPorVehiculo
+-- Muestra el top de services realizados por vehículos por rango de fecha
+
+CREATE VIEW Vw_ServicesPorVehiculo
+AS
+SELECT
+    S.IdService,
+    S.FechaInicio     AS FechaService,
+    V.IdVehiculo,
+    V.Patente,
+    M.Nombre          AS Modelo,
+    MA.Nombre         AS Marca
+FROM Service_ S
+INNER JOIN Turno   T ON S.IdTurno    = T.IdTurno
+INNER JOIN Vehiculo V ON T.IdVehiculo = V.IdVehiculo
+INNER JOIN Modelo  M ON V.IdModelo   = M.IdModelo
+INNER JOIN Marca   MA ON M.IdMarca   = MA.IdMarca;
+
+GO
+
+-- Se declara e agrupa por el rango de fechas que queramos para ver el top de vehiculos 
+
+DECLARE @FechaDesde DATE = '2024-01-01';
+DECLARE @FechaHasta DATE = '2024-12-31';
+
+SELECT TOP 10
+    V.IdVehiculo,
+    V.Patente,
+    V.Modelo,
+    V.Marca,
+    COUNT(*) AS TotalServices
+FROM Vw_ServicesPorVehiculo V
+WHERE V.FechaService BETWEEN @FechaDesde AND @FechaHasta
+GROUP BY
+    V.IdVehiculo,
+    V.Patente,
+    V.Modelo,
+    V.Marca
+ORDER BY
+    TotalServices DESC;
