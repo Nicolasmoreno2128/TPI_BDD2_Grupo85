@@ -244,7 +244,12 @@ INSERT INTO Vehiculo (IdCliente, IdModelo, Patente, Kilometraje) VALUES
 (2, 3, 'AC456CD', 72000),
 (3, 4, 'AD789EF', 48000),
 (4, 5, 'AE321GH', 35000),
-(5, 6, 'AF654IJ', 61000);
+(5, 6, 'AF654IJ', 61000),
+(1, 2, 'AA987CD', 45000),  
+(2, 5, 'AC222EF', 38000),  
+(3, 1, 'AD333GH', 52000),  
+(4, 4, 'AE444IJ', 69000),  
+(5, 6, 'AF555KL', 41000);  
 
 INSERT INTO Pago (FechaPago, Monto, MetodoPago) VALUES
 ('2024-05-01', 25000, 'Efectivo'),
@@ -282,20 +287,36 @@ INSERT INTO Turno (IdVehiculo, IdEmpleado, FechaTurno, Estado, Observaciones) VA
 (2, 4, '2025-12-02', 'Pendiente', 'Revisión general antes de viaje largo'),
 (3, 3, '2025-12-10', 'Programado', 'Chequeo de frenos y alineación'),
 (4, 5, '2025-12-18', 'Pendiente', 'Cambio de batería y diagnóstico electrónico'),
-(5, 4, '2026-01-15', 'Pendiente', 'Service completo post vacaciones');
+(5, 4, '2026-01-15', 'Pendiente', 'Service completo post vacaciones'),
+(6, 3, '2024-08-01', 'Completado', 'Cambio de aceite y control general'),
+(7, 4, '2024-08-10', 'Completado', 'Revisión general antes de viaje'),
+(8, 3, '2024-09-05', 'Completado', 'Cambio de pastillas de freno'),
+(9, 5, '2024-09-20', 'Completado', 'Alineación y balanceo'),
+(10, 4, '2024-10-01', 'Completado', 'Cambio de batería');
+
 
 INSERT INTO Service_ (IdTurno, IdEmpleado, IdTipoService, FechaInicio, FechaFinal, Estado, IdPago) VALUES
 (1, 3, 1, '2024-05-05', '2024-05-06', 'Finalizado', 1),
 (3, 3, 2, '2024-06-01', '2024-06-02', 'Finalizado', 2),
 (4, 4, 5, '2024-07-10', NULL, 'En Proceso', 3),
-(5, 3, 4, '2024-07-20', '2024-07-21', 'Finalizado', 4);
+(5, 3, 4, '2024-07-20', '2024-07-21', 'Finalizado', 4),
+(6, 3, 1, '2024-08-01', '2024-08-02', 'Finalizado', 1),
+(7, 4, 2, '2024-08-10', '2024-08-11', 'Finalizado', 2),
+(8, 3, 4, '2024-09-05', '2024-09-06', 'Finalizado', 3),
+(9, 5, 3, '2024-09-20', '2024-09-21', 'Finalizado', 4),
+(10, 4, 5, '2024-10-01', '2024-10-02', 'Finalizado', 5);
 
 INSERT INTO Service_Detalle (IdService, IdManoDeObra, Horas, PrecioPorHora) VALUES
 (1, 1, 1.0, 3500.00), -- service 1 - cambio aceite, $3500, 1 hora
 (1, 3, 2.5, 4500.00), -- service 1 - revision general, $4500, 2.5 hora
 (2, 4, 1.5, 3800.00), -- service 2 - frenos, $3800, 1.5 hora
 (3, 5, 0.5, 3000.00),
-(4, 2, 1.2, 4000.00);
+(4, 2, 1.2, 4000.00),
+(6, 1, 1.0, 3500.00),
+(7, 3, 2.0, 4500.00),
+(8, 4, 1.5, 3800.00),
+(9, 2, 1.2, 4000.00),
+(10, 5, 0.8, 3000.00);
 
 INSERT INTO Repuesto (Nombre, Stock, PrecioUnitario) VALUES
 ('Filtro de aceite', 50, 2500.00),
@@ -309,6 +330,7 @@ INSERT INTO Repuesto (Nombre, Stock, PrecioUnitario) VALUES
 ('Filtro de combustible', 35, 4100.00),
 ('Limpiador inyectores', 15, 3800.00);
 
+
 INSERT INTO ServiceDetalle_X_Repuestos (IdServiceDetalle, IdRepuesto, Cantidad, PrecioUnitario) VALUES
 (1, 1, 1, 2500.00),
 (1, 2, 4, 8500.00),
@@ -316,7 +338,12 @@ INSERT INTO ServiceDetalle_X_Repuestos (IdServiceDetalle, IdRepuesto, Cantidad, 
 (3, 4, 1, 45000.00),
 (4, 5, 1, 3200.00),
 (4, 6, 4, 1500.00),
-(5, 2, 3, 2200.00);
+(5, 2, 3, 2200.00),
+(6, 1, 1, 2500.00),
+(7, 3, 1, 7800.00),
+(8, 2, 4, 8500.00),
+(9, 5, 1, 3200.00),
+(10, 4, 1, 45000.00);
 
 INSERT INTO Service_Detalle_x_Tipo_Service (IdServiceDetalle, IdTipoService) VALUES
 (1, 1),
