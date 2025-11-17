@@ -160,7 +160,7 @@ INSERT INTO Repuesto (Nombre, Stock, PrecioUnitario) VALUES
 
 
 INSERT INTO ServiceDetalle_X_Repuestos (IdServiceDetalle, IdRepuesto, Cantidad, PrecioUnitario) VALUES
-(1, 1, 1, 2500.00),
+(1, 1, 49, 2500.00),
 (1, 2, 4, 8500.00),
 (2, 3, 1, 7800.00),
 (3, 4, 1, 45000.00),

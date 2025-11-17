@@ -52,7 +52,28 @@ GO
 
 INSERT INTO ServiceDetalle_X_Repuestos (IdServiceDetalle, IdRepuesto, Cantidad, PrecioUnitario)
 VALUES (1,10,1000000, 3800.00)
+GO
 
+-- Eliminación en cascada
+CREATE OR ALTER TRIGGER trg_ServiceBorradoEnCascada
+ON Service_
+INSTEAD OF DELETE
+AS
+BEGIN
+    -- 1) Borramos los repuestos asociados al detalle del service
+    DELETE SR
+    FROM ServiceDetalle_X_Repuestos SR
+    INNER JOIN Service_Detalle SD ON SR.IdServiceDetalle = SD.IdServiceDetalle
+    INNER JOIN deleted d ON SD.IdService = d.IdService;
 
+    -- 2) Borramos los detalles del service
+    DELETE SD
+    FROM Service_Detalle SD
+    INNER JOIN deleted d ON SD.IdService = d.IdService;
 
-    
+    -- 3) Borramos el service
+    DELETE S
+    FROM Service_ S
+    INNER JOIN deleted d ON S.IdService = d.IdService;
+END
+GO
